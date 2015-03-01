@@ -530,7 +530,16 @@ namespace BCrypt.Net
         /// <returns>true if the passwords match, false otherwise.</returns>
         public static bool Verify(string text, string hash)
         {
-            return hash == HashPassword(text, hash);
+            // Bcrypt.NET uses == for comparison which is vulnerable to timing attacks.
+            // We compare all the bytes instead.
+            var calc = HashPassword(text, hash);
+
+            var diff = (uint) hash.Length ^ (uint) calc.Length;
+            for (int i = 0; i < hash.Length && i < calc.Length; i++)
+            {
+                diff |= (uint) hash[i] ^ (uint) calc[i];
+            }
+            return diff == 0;
         }
 
         /// <summary>
