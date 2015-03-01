@@ -1,4 +1,21 @@
-﻿// 
+﻿/****************************************************************************************
+ * IMPORTANT                                                                            *
+ * =========                                                                            *
+ *                                                                                      *
+ * Don't use this class unless you know why you are using a broken fork of BCrypt.Net   *
+ * it is NOT a good BCrypt implementation!                                              *
+ *                                                                                      *
+ ****************************************************************************************/    
+
+
+//
+// Forked from BCrypt.Net Project http://bcrypt.codeplex.com
+//
+// Bodged to provide a BCrypt implementation with the same flaws as the 
+// native PHP implementation. e.g. allow salts that are too short.
+//
+
+// 
 // Copyright (c) 2006 Damien Miller <djm@mindrot.org>
 // Copyright (c) 2013 Ryan D. Emerle
 // 
@@ -387,7 +404,7 @@ namespace BCrypt.Net
         /// <returns>The hashed string.</returns>
         public static string HashString(string source)
         {
-            return HashPassword(source);
+            throw new NotImplementedException("Don't use broken BCrypt!");
         }
 
         /// <summary>
@@ -401,7 +418,7 @@ namespace BCrypt.Net
         /// <returns>The hashed string.</returns>
         public static string HashString(string source, int workFactor)
         {
-            return HashPassword(source, GenerateSalt(workFactor));
+            throw new NotImplementedException("Don't use broken BCrypt!");
         }
 
         /// <summary>
@@ -412,7 +429,7 @@ namespace BCrypt.Net
         /// <returns>The hashed password.</returns>
         public static string HashPassword(string input)
         {
-            return HashPassword(input, GenerateSalt());
+            throw new NotImplementedException("Don't use broken BCrypt!");
         }
 
         /// <summary>
@@ -425,7 +442,7 @@ namespace BCrypt.Net
         /// <returns>The hashed password.</returns>
         public static string HashPassword(string input, int workFactor)
         {
-            return HashPassword(input, GenerateSalt(workFactor));
+            throw new NotImplementedException("Don't use broken BCrypt!");
         }
 
         /// <summary>Hash a password using the OpenBSD bcrypt scheme.</summary>
@@ -477,7 +494,8 @@ namespace BCrypt.Net
             if (minor >= 'a')
                 result.Append(minor);
             result.AppendFormat("${0:00}$", logRounds);
-            result.Append(EncodeBase64(saltBytes, saltBytes.Length));
+            //result.Append(EncodeBase64(saltBytes, saltBytes.Length));
+            result.Append(extractedSalt); // Use supplied salt so PHP bodges work correctly
             result.Append(EncodeBase64(hashed, (_BfCryptCiphertext.Length * 4) - 1));
             return result.ToString();
         }
@@ -490,17 +508,7 @@ namespace BCrypt.Net
         /// <returns>A base64 encoded salt value.</returns>
         public static string GenerateSalt(int workFactor)
         {
-            if (workFactor < 4 || workFactor > 31)
-                throw new ArgumentOutOfRangeException("workFactor", workFactor, "The work factor must be between 4 and 31 (inclusive)");
-
-            byte[] rnd = new byte[BCRYPT_SALT_LEN];
-            RandomNumberGenerator rng = RandomNumberGenerator.Create();
-            rng.GetBytes(rnd);
-
-            StringBuilder rs = new StringBuilder();
-            rs.AppendFormat("$2a${0:00}$", workFactor);
-            rs.Append(EncodeBase64(rnd, rnd.Length));
-            return rs.ToString();
+            throw new NotImplementedException("Don't use broken BCrypt!");
         }
 
         /// <summary>
@@ -510,7 +518,7 @@ namespace BCrypt.Net
         /// <returns>A base64 encoded salt value.</returns>
         public static string GenerateSalt()
         {
-            return GenerateSalt(GENSALT_DEFAULT_LOG2_ROUNDS);
+            throw new NotImplementedException("Don't use broken BCrypt!");
         }
 
         /// <summary>
@@ -613,9 +621,11 @@ namespace BCrypt.Net
                 ++outputLength;
             }
 
-            byte[] ret = new byte[outputLength];
+            // PHP Bodge - Make byte array the desired size rather than actual size - extra bytes will be null
+            byte[] ret = new byte[maximumBytes];
             for (position = 0; position < outputLength; position++)
                 ret[position] = (byte)rs[position];
+            
             return ret;
         }
 
