@@ -14,10 +14,7 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace BCrypt.Net.Test
@@ -73,64 +70,6 @@ namespace BCrypt.Net.Test
         }
 
         /**
-         * Test method for 'BCrypt.GenerateSalt(int)'
-         */
-        [TestMethod]
-        public void TestGenerateSaltWithWorkFactor()
-        {
-            Trace.Write("BCrypt.GenerateSalt(log_rounds):");
-            for (int i = 4; i <= 12; i++)
-            {
-                Trace.Write(" " + i + ":");
-                for (int j = 0; j < _TestVectors.Length / 3; j++)
-                {
-                    string plain = _TestVectors[j, 0];
-                    string salt = BCrypt.GenerateSalt(i);
-                    string hashed1 = BCrypt.HashPassword(plain, salt);
-                    string hashed2 = BCrypt.HashPassword(plain, hashed1);
-                    Assert.AreEqual(hashed1, hashed2);
-                    Trace.Write(".");
-                }
-            }
-            Trace.WriteLine("");
-        }
-
-        [TestMethod]
-        public void TestGenerateSaltWithMaxWorkFactor()
-        {
-            Trace.Write("BCrypt.GenerateSalt(31):");
-            for (int j = 0; j < _TestVectors.Length / 3; j++)
-            {
-                string plain = _TestVectors[j, 0];
-                string salt = BCrypt.GenerateSalt(31);
-                string hashed1 = BCrypt.HashPassword(plain, salt);
-                string hashed2 = BCrypt.HashPassword(plain, hashed1);
-                Assert.AreEqual(hashed1, hashed2);
-                Trace.Write(".");
-            }
-            Trace.WriteLine("");
-        }
-
-        /**
-         * Test method for 'BCrypt.GenerateSalt()'
-         */
-        [TestMethod]
-        public void TestGenerateSalt()
-        {
-            Trace.Write("BCrypt.GenerateSalt(): ");
-            for (int i = 0; i < _TestVectors.Length / 3; i++)
-            {
-                string plain = _TestVectors[i, 0];
-                string salt = BCrypt.GenerateSalt();
-                string hashed1 = BCrypt.HashPassword(plain, salt);
-                string hashed2 = BCrypt.HashPassword(plain, hashed1);
-                Assert.AreEqual(hashed1, hashed2);
-                Trace.Write(".");
-            }
-            Trace.WriteLine("");
-        }
-
-        /**
          * Test method for 'BCrypt.VerifyPassword(string, string)'
          * expecting success
          */
@@ -164,26 +103,6 @@ namespace BCrypt.Net.Test
                 Assert.IsFalse(BCrypt.Verify(plain, expected));
                 Trace.Write(".");
             }
-            Trace.WriteLine("");
-        }
-
-        /**
-         * Test for correct hashing of non-US-ASCII passwords
-         */
-        [TestMethod]
-        public void TestInternationalChars()
-        {
-            Trace.Write("BCrypt.HashPassword w/ international chars: ");
-            string pw1 = "ππππππππ";
-            string pw2 = "????????";
-
-            string h1 = BCrypt.HashPassword(pw1, BCrypt.GenerateSalt());
-            Assert.IsFalse(BCrypt.Verify(pw2, h1));
-            Trace.Write(".");
-
-            string h2 = BCrypt.HashPassword(pw2, BCrypt.GenerateSalt());
-            Assert.IsFalse(BCrypt.Verify(pw1, h2));
-            Trace.Write(".");
             Trace.WriteLine("");
         }
     }
