@@ -1,0 +1,12 @@
+﻿################################################################################
+# Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
+################################################################################
+
+/BCrypt.Net/bin/Debug
+/BCrypt.Net.Test/bin/Debug
+/.vs
+/BCrypt.Net.Test/obj
+/BCrypt.Net/obj/Debug
+/BCrypt.Net/bin/Release
+/BCrypt.Net/obj/Release
+/BCrypt.Net.Test/bin/Release
